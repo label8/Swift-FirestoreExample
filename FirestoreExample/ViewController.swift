@@ -19,13 +19,18 @@ class ViewController: UIViewController {
     var db : Firestore!
     var ref: DocumentReference?
     
-    let myId = "kkadgadsdiihc19k"
-    let yourId = "kidgeacdgiao984kdg"
+    let myId = "gAyvK4fqTvXCUSF1BLTF3Bwf42G2"
+    let yourId = "en9MHDRkBAXxZfG6P7xfkQQlQu22"
+    let otherId = "YOzC0LRsgtQeH9bjLPxPHggZfu82"
+    var roomId = ""
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         db = Firestore.firestore()
+        
+//    roomId = "Room_\(myId)_\(yourId)"
+        roomId = "Room_\(myId)_\(otherId)"
     }
 
     override func didReceiveMemoryWarning() {
@@ -35,7 +40,7 @@ class ViewController: UIViewController {
     @IBAction func didTappedDataCreateButton(_ sender: UIButton) {
 //        guard let data = dataCreateTextField.text else { return }
         
-        let chatsRef = db.collection("Chats").document("room-kidgeacdgiao984kdg").collection("messages")
+        let chatsRef = db.collection("Chats").document(roomId).collection("messages")
         chatsRef.getDocuments { (snapshot, error) in
             if let err = error {
                 print("Error writing document: \(err)")
@@ -55,7 +60,7 @@ class ViewController: UIViewController {
             "name": "tsune",
             "gender": "male",
             "age": 39,
-            "message": "僕は朝霞っていうところです！ 知ってますか？",
+            "message": "kyonさんこんにちわ！",
             "lastUpdated": FieldValue.serverTimestamp()
         ] as [String: Any]
         
@@ -64,14 +69,23 @@ class ViewController: UIViewController {
             "name": "hono",
             "gender": "female",
             "age": 32,
-            "message": "どちらにお住まいですか？ 私は大宮です^^",
+            "message": "朝霞なんですね^^ わたしは大宮ですよー！",
+            "lastUpdated": FieldValue.serverTimestamp()
+        ] as [String: Any]
+        
+        let otherMessage = [
+            "uid": otherId,
+            "name": "kyon",
+            "gender": "female",
+            "age": 24,
+            "message": "どうもです",
             "lastUpdated": FieldValue.serverTimestamp()
         ] as [String: Any]
         
         let messageId = "\(count + 1)"
         
-        db.collection("Chats").document("room-\(yourId)")
-            .collection("messages").document(messageId).setData(myMessage) { error in
+        db.collection("Chats").document(roomId)
+            .collection("messages").document(messageId).setData(otherMessage) { error in
                 if let err = error {
                     print("Error writing document: \(err)")
                 } else {
@@ -85,17 +99,31 @@ class ViewController: UIViewController {
     }
     
     @IBAction func didTappedDataSearchButton(_ sender: UIButton) {
-        db.collection("Chats").document("room-\(yourId)").collection("messages")
+        db.collection("Chats").document(roomId).collection("messages")
             .addSnapshotListener { documentSnapshot, error in
                 guard let document = documentSnapshot else {
                     print("Error fetching document: \(error!)")
                     return
                 }
-                print(document.documents.count)
+                let source = document.metadata.hasPendingWrites ? "Local" : "Server"
+                print("\(source): ", document.documents.count)
                 let docs = document.documents
                 docs.forEach {
-                    print($0.data())
+                    print("\(source):", $0.data())
                 }
+                
+                let _ = self.db.collection("Chats").document(self.roomId)
+                    .collection("messages").whereField("name", isEqualTo: "tsune")
+                    .getDocuments(completion: { (querySnapshot, error) in
+                        if let err = error {
+                            print("Error fetching document: \(err)")
+                        } else {
+                            for document in querySnapshot!.documents {
+                                print(document.data())
+                            }
+                        }
+                    })
+                
         }
     }
     
