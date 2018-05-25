@@ -19,18 +19,14 @@ class ViewController: UIViewController {
     var db : Firestore!
     var ref: DocumentReference?
     
-    let myId = "gAyvK4fqTvXCUSF1BLTF3Bwf42G2"
-    let yourId = "en9MHDRkBAXxZfG6P7xfkQQlQu22"
-    let otherId = "YOzC0LRsgtQeH9bjLPxPHggZfu82"
+    let myId = "vq7ogXCvOeQsNC7qbJST"
+    let yourId = "aMBVU5lPemaoAbjBmcV5"
     var roomId = ""
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         db = Firestore.firestore()
-        
-//    roomId = "Room_\(myId)_\(yourId)"
-        roomId = "Room_\(myId)_\(otherId)"
     }
 
     override func didReceiveMemoryWarning() {
@@ -73,19 +69,10 @@ class ViewController: UIViewController {
             "lastUpdated": FieldValue.serverTimestamp()
         ] as [String: Any]
         
-        let otherMessage = [
-            "uid": otherId,
-            "name": "kyon",
-            "gender": "female",
-            "age": 24,
-            "message": "どうもです",
-            "lastUpdated": FieldValue.serverTimestamp()
-        ] as [String: Any]
-        
         let messageId = "\(count + 1)"
         
         db.collection("Chats").document(roomId)
-            .collection("messages").document(messageId).setData(otherMessage) { error in
+            .collection("messages").document(messageId).setData(myMessage) { error in
                 if let err = error {
                     print("Error writing document: \(err)")
                 } else {
