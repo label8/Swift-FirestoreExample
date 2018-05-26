@@ -86,7 +86,10 @@ class ViewController: UIViewController {
     }
     
     @IBAction func didTappedDataSearchButton(_ sender: UIButton) {
-        db.collection("Chats").document(roomId).collection("messages")
+        
+        roomId = "Room_\(yourId)"
+        
+        db.collection("Chats").document(roomId).collection("Messages")
             .addSnapshotListener { documentSnapshot, error in
                 guard let document = documentSnapshot else {
                     print("Error fetching document: \(error!)")
@@ -99,18 +102,48 @@ class ViewController: UIViewController {
                     print("\(source):", $0.data())
                 }
                 
-                let _ = self.db.collection("Chats").document(self.roomId)
-                    .collection("messages").whereField("name", isEqualTo: "tsune")
-                    .getDocuments(completion: { (querySnapshot, error) in
-                        if let err = error {
-                            print("Error fetching document: \(err)")
-                        } else {
-                            for document in querySnapshot!.documents {
-                                print(document.data())
-                            }
+//                let _ = self.db.collection("Chats").document(self.roomId)
+//                    .collection("messages").whereField("name", isEqualTo: "tsune")
+//                    .getDocuments(completion: { (querySnapshot, error) in
+//                        if let err = error {
+//                            print("Error fetching document: \(err)")
+//                        } else {
+//                            for document in querySnapshot!.documents {
+//                                print(document.data())
+//                            }
+//                        }
+//                    })
+        }
+    }
+    
+    @IBAction func didTappedListSearchButton(_ sender: UIButton) {
+        db.collection("Users").document(myId).collection("Rooms").getDocuments() { querySnapshot, error in
+            if let err = error {
+                print("Error getting documents: \(err)")
+            } else {
+                for document in querySnapshot!.documents {
+                    // Collection Reference Type から 参照先のDocumentIDを取得
+                    let docRef = document.data()
+                    let chatRoom = docRef["Romm"] as? DocumentReference
+                    
+                    print(chatRoom?.documentID ?? "")
+                    
+                    self.db.collection("Chats").document((chatRoom?.documentID)!).collection("Messages")
+                        .addSnapshotListener { (snapShot, error) in
+                        
+                        guard let document = snapShot else {
+                            print("Error fetching document: \(error!)")
+                            return
                         }
-                    })
-                
+                        let source = document.metadata.hasPendingWrites ? "Local" : "Server"
+                        print("\(source): ", document.documents.count)
+                        let docs = document.documents
+                        docs.forEach {
+                            print("\(source):", $0.data())
+                        }
+                    }
+                }
+            }
         }
     }
     
