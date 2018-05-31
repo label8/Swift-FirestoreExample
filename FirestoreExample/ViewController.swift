@@ -27,6 +27,7 @@ class ViewController: UIViewController {
     var myId = ""
     var yourId = ""
     
+    var chatMessage = [String: Any]()
     var chatCount = 0
     
     override func viewDidLoad() {
@@ -43,34 +44,48 @@ class ViewController: UIViewController {
     }
 
     @IBAction func didTappedDataCreateButton(_ sender: UIButton) {
-        guard let _ = dataCreateTextField.text else { return }
-        
-        searchYourChatRefFromMyChatId { yourChatRef in
-            if let _ = yourChatRef {
-                self.sendMessage()
-            } else {
-                self.createChatAndSendMessage()
-            }
-        }
-}
-    
-    private func sendMessage() {
-        
-    }
-    
-    private func createChatAndSendMessage() {
-        let batch = db.batch()
-        
         guard let chatText = dataCreateTextField.text else { return }
-        let chat = [
+        
+        chatMessage = [
             "senderId": myId,
             "receiverId": yourId,
             "message": chatText,
             "isMedia": false,
             "isRead": false,
             "sendDate": FieldValue.serverTimestamp()
-        ] as [String : Any]
-
+        ]
+        
+        searchYourChatRefFromMyChatId { yourChatRef in
+            if let chatRef = yourChatRef {
+                self.sendMessage(chatRef)
+            } else {
+                self.createChatAndSendMessage()
+            }
+        }
+    }
+    
+    private func sendMessage(_ yourChatRef: DocumentReference) {
+        
+        let chatDocument = db.collection("Chats").document(yourChatRef.documentID).collection("Messages")
+        chatDocument.getDocuments { querySnapshot, error in
+            let recordCount = querySnapshot?.count ?? 0
+            self.chatCount = recordCount + 1
+            
+            let chatsMessageRef = chatDocument.document(String(self.chatCount))
+            chatsMessageRef.setData(self.chatMessage) { error in
+                if let err = error {
+                    print("Error writing chat message: \(err)")
+                } else {
+                    print("Chat message successfully written")
+                }
+            }
+        }
+        
+    }
+    
+    private func createChatAndSendMessage() {
+        let batch = db.batch()
+        
         let chatsRef = db.collection("Chats").document()
         let chatDocumentId = chatsRef.documentID
         let chatDocument = db.collection("Chats").document(chatDocumentId).collection("Messages")
@@ -80,7 +95,7 @@ class ViewController: UIViewController {
             self.chatCount = recordCount + 1
             
             let chatsMessageRef = chatDocument.document(String(self.chatCount))
-            batch.setData(chat, forDocument: chatsMessageRef)
+            batch.setData(self.chatMessage, forDocument: chatsMessageRef)
             
             let myChatsRef = self.db.collection("Users").document(self.myId).collection("Chats").document(chatDocumentId)
             let my = [
@@ -98,9 +113,9 @@ class ViewController: UIViewController {
             
             batch.commit { error in
                 if let err = error {
-                    print("Add chat batch error: ", err)
+                    print("Error writing chat message: ", err)
                 } else {
-                    print("Add chat complete!")
+                    print("Chat message successfully written")
                 }
             }
         }
@@ -170,7 +185,6 @@ class ViewController: UIViewController {
                     }
                 }
         }
-
     }
     
     // チャット内容を表示
