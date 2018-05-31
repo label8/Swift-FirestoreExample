@@ -14,6 +14,7 @@
 		3C0F416C20B594CE00E125AD /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3C0F416B20B594CE00E125AD /* Assets.xcassets */; };
 		3C0F416F20B594CE00E125AD /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3C0F416D20B594CE00E125AD /* LaunchScreen.storyboard */; };
 		3C0F417720B599DE00E125AD /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3C0F417620B599DE00E125AD /* GoogleService-Info.plist */; };
+		3CE9E5F520BFE22E0044EF67 /* BackupLogic.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CE9E5F420BFE22E0044EF67 /* BackupLogic.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -26,6 +27,7 @@
 		3C0F416E20B594CE00E125AD /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		3C0F417020B594CE00E125AD /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		3C0F417620B599DE00E125AD /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		3CE9E5F420BFE22E0044EF67 /* BackupLogic.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackupLogic.swift; sourceTree = "<group>"; };
 		417126399BAB9290CA0A6D6C /* Pods_FirestoreExample.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_FirestoreExample.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D6667CEFF670B8E74184FB8F /* Pods-FirestoreExample.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-FirestoreExample.release.xcconfig"; path = "Pods/Target Support Files/Pods-FirestoreExample/Pods-FirestoreExample.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -79,6 +81,7 @@
 				3C0F416D20B594CE00E125AD /* LaunchScreen.storyboard */,
 				3C0F417620B599DE00E125AD /* GoogleService-Info.plist */,
 				3C0F417020B594CE00E125AD /* Info.plist */,
+				3CE9E5F420BFE22E0044EF67 /* BackupLogic.swift */,
 			);
 			path = FirestoreExample;
 			sourceTree = "<group>";
@@ -221,6 +224,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				3C0F416720B594CD00E125AD /* ViewController.swift in Sources */,
+				3CE9E5F520BFE22E0044EF67 /* BackupLogic.swift in Sources */,
 				3C0F416520B594CD00E125AD /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
